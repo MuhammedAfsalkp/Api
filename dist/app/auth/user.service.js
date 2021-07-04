@@ -14,58 +14,77 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_service_1 = __importDefault(require("../../common/commonservice/mongoose.service"));
 const db_1 = __importDefault(require("../../common/db"));
-const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
-const mongoose_1 = __importDefault(require("mongoose"));
 const utils_1 = require("../../common/utils");
-class CategoryService extends db_1.default {
+const mongoose_paginate_v2_1 = __importDefault(require("mongoose-paginate-v2"));
+class AuthService extends db_1.default {
     constructor() {
         super();
         this.schema = mongoose_service_1.default.getMongoose().Schema;
-        this.CategorySchema = new this.schema({
-            userId: {
-                required: true,
-                type: mongoose_1.default.Schema.Types.ObjectId,
-                ref: 'User'
-            },
-            name: {
+        this.userSchema = new this.schema({
+            // _id:String,
+            userName: {
                 required: true,
                 type: String
             },
-            description: {
+            email: {
                 required: true,
                 type: String
+            },
+            password: {
+                required: true,
+                select: false,
+                type: String
+            },
+            role: {
+                required: true,
+                type: String,
+                default: 'normal',
+                enum: ['normal', 'admin']
+            },
+            isActive: {
+                required: true,
+                type: Boolean,
+                default: true,
             }
         }, {
             versionKey: false,
             timestamps: true
         }).plugin(mongoose_paginate_v2_1.default);
-        this.Category = mongoose_service_1.default.getMongoose().model('Category', this.CategorySchema);
-        this.model = this.Category;
+        this.User = mongoose_service_1.default.getMongoose().model('user', this.userSchema);
+        this.model = this.User;
     }
     static getInstance() {
         if (!this.instance) {
-            return new CategoryService();
+            return new AuthService();
         }
         return this.instance;
     }
-    isPermitted(id, res) {
+    create(body) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
-                this.Category.findById(id).exec((err, cat) => {
-                    console.log(cat);
-                    console.log(res.locals.user.userId);
-                    if (err || cat == null) {
-                        reject(utils_1.buildErrObj(400, 'INVALID-REQUEST'));
-                    }
-                    else if (cat.userId.toString() == res.locals.user.userId) {
-                        resolve(true);
+                const user = new this.User(Object.assign({}, body));
+                user.save((err, item) => {
+                    if (err) {
+                        reject(utils_1.buildErrObj(500, err.message));
                     }
                     else {
-                        reject(utils_1.buildErrObj(403, 'NOT_PERMITTED'));
+                        resolve(item);
                     }
                 });
             });
         });
     }
+    findUserByRoleName(userName, role) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                this.User.findOne({ userName, role }, 'password isActive email userName role').exec((err, user) => {
+                    if (err) {
+                        reject(utils_1.buildErrObj(400, err.message));
+                    }
+                    resolve(user);
+                });
+            });
+        });
+    }
 }
-exports.default = CategoryService.getInstance();
+exports.default = AuthService.getInstance();

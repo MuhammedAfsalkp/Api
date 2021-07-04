@@ -65,7 +65,15 @@ export function itemNotFound(err:any,item:any,reject:any,message:any){
         reject(buildErrObj(400,err.message))
     }
     if(!item || item== null){
-        reject(buildErrObj(400,'NOT_FOUNd'))
+        reject(buildErrObj(400,'NOT_FOUND'))
 
     }
+}
+
+export function getEnvValue(envName:string,def:any){
+    if(envName in process.env){
+        return process.env[envName]
+    }
+    return def;
+
 }

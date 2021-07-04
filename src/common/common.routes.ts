@@ -10,7 +10,7 @@ abstract class CommonRoutesConfig{
         // this.configRoutes()
 
     }
-    abstract configRoutes():void
+    abstract configRoutes():express.Application
 }
 
 

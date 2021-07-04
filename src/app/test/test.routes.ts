@@ -10,7 +10,7 @@ class TestRoutes extends CommonRoutes{
 
     }
 
-    configRoutes(){
+    configRoutes():express.Application{
         console.log("Test routes Working")
         this.app.get('/test',(req,res)=>{
             res.status(200).send("Updatingg")
@@ -20,7 +20,7 @@ class TestRoutes extends CommonRoutes{
 
 
 
-       // return this.app;
+        return this.app;
     }
     
 }

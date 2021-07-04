@@ -65,7 +65,8 @@ export default class db{
     }
 
     async updateItem(id:any, body:any){
-        return new Promise((resolve,reject)=>{
+        return new Promise(async(resolve,reject)=>{
+
             this.model.findByIdAndUpdate(id,body,{runValidators:true,new:true},(err:any,item:any)=>{
                 itemNotFound(err,item,reject,'Not-FOUND')
                 console.log(item)
@@ -81,6 +82,7 @@ export default class db{
 
     async deleteItem(id:any){
         return new Promise((resolve,reject)=>{
+        
             this.model.findByIdAndRemove(id,{} ,(err: any, item: any) => {
                 itemNotFound(err, item, reject, 'NOT_FOUND')
                 console.log(item)
@@ -90,6 +92,18 @@ export default class db{
             
         })
 
+    }
+
+    public async isExist(where: any) {
+        return new Promise((resolve, reject) => {
+            this.model.findOne(where, (err: any, item: any) => {
+                if (item || err) {
+                    return resolve(true)
+                } else {
+                    return resolve(false)
+                }
+            })
+        })
     }
 
 

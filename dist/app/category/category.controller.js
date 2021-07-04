@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const common_controller_1 = __importDefault(require("../../common/common.controller"));
 const category_service_1 = __importDefault(require("./category.service"));
-const category_service_2 = __importDefault(require("./category.service"));
 const utils_1 = require("../../common/utils");
 const express_validator_1 = require("express-validator");
 class CategoryContoller extends common_controller_1.default {
@@ -23,10 +22,11 @@ class CategoryContoller extends common_controller_1.default {
         this.getAllItems = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log(req.query);
+                //filter operations,option setting in extending db,ts
                 const query = req.query;
                 const select = { name: 1 };
-                const sort = { sort: { name: 1 }, limit: 3 };
-                this.ok(res, yield category_service_2.default.getAllItem(query, select, sort));
+                const sort = { sort: { name: 1 }, limit: 0 };
+                this.ok(res, yield category_service_1.default.getAllItem(query, select, sort));
             }
             catch (err) {
                 this.serverError(res, err);
@@ -39,7 +39,7 @@ class CategoryContoller extends common_controller_1.default {
                 console.log(params);
                 let id = yield utils_1.isIdGood(params.id);
                 console.log("Good id");
-                this.ok(res, yield category_service_2.default.getItem(id));
+                this.ok(res, yield category_service_1.default.getItem(id));
             }
             catch (err) {
                 this.serverError(res, err);
@@ -49,7 +49,8 @@ class CategoryContoller extends common_controller_1.default {
             try {
                 console.log(req.body);
                 let body = express_validator_1.matchedData(req);
-                this.ok(res, yield category_service_2.default.createItem(body));
+                body.userId = res.locals.user.userId;
+                this.ok(res, yield category_service_1.default.createItem(body));
             }
             catch (err) {
                 this.serverError(res, err);
@@ -60,6 +61,7 @@ class CategoryContoller extends common_controller_1.default {
                 console.log(req.params.id);
                 let body = express_validator_1.matchedData(req);
                 let id = yield utils_1.isIdGood(body.id);
+                let allowed = yield category_service_1.default.isPermitted(id, res);
                 this.ok(res, yield category_service_1.default.updateItem(id, body));
             }
             catch (err) {
@@ -71,7 +73,8 @@ class CategoryContoller extends common_controller_1.default {
                 let params = express_validator_1.matchedData(req);
                 console.log(params);
                 let id = yield utils_1.isIdGood(params.id);
-                this.ok(res, yield category_service_2.default.deleteItem(id));
+                let allowed = yield category_service_1.default.isPermitted(id, res);
+                this.ok(res, yield category_service_1.default.deleteItem(id));
             }
             catch (err) {
                 this.serverError(res, err);

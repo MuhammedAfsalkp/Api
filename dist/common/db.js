@@ -62,13 +62,13 @@ class db {
     }
     updateItem(id, body) {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 this.model.findByIdAndUpdate(id, body, { runValidators: true, new: true }, (err, item) => {
                     utils_1.itemNotFound(err, item, reject, 'Not-FOUND');
                     console.log(item);
                     resolve(item);
                 });
-            });
+            }));
         });
     }
     deleteItem(id) {
@@ -78,6 +78,20 @@ class db {
                     utils_1.itemNotFound(err, item, reject, 'NOT_FOUND');
                     console.log(item);
                     resolve(utils_1.buildSuccessObject('DELETED'));
+                });
+            });
+        });
+    }
+    isExist(where) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                this.model.findOne(where, (err, item) => {
+                    if (item || err) {
+                        return resolve(true);
+                    }
+                    else {
+                        return resolve(false);
+                    }
                 });
             });
         });

@@ -4,6 +4,7 @@ const trimRequest=require('trim-request')
 import CommonRoutes from '../../common/common.routes'
 import CategoryController from './category.controller'
 import CategoryMiddleware from './category.middleware'
+import jwtMiddleware from '../auth/jwt.middleware'
 
 class CategoryRoutes extends CommonRoutes{
    
@@ -14,7 +15,7 @@ class CategoryRoutes extends CommonRoutes{
 
     }
 
-    configRoutes(){
+    configRoutes():express.Application{
         console.log("category routes working")
 
 
@@ -22,16 +23,16 @@ class CategoryRoutes extends CommonRoutes{
 
         this.app.get('/category/:id',[trimRequest.all,CategoryMiddleware.validateGetItem,CategoryController.getItem])
 
-        this.app.post('/category',[trimRequest.all,CategoryMiddleware.validateCreateItem,CategoryController.createItem])
+        this.app.post('/category',[jwtMiddleware.verifyAccessJwt,jwtMiddleware.validateRole(['admin']),trimRequest.all,CategoryMiddleware.validateCreateItem,CategoryController.createItem])
 
-        this.app.patch('/category/:id',[trimRequest.all,CategoryMiddleware.validateUpdateItem,CategoryController.updateItem])
+        this.app.patch('/category/:id',[jwtMiddleware.verifyAccessJwt,jwtMiddleware.validateRole(['admin']),trimRequest.all,CategoryMiddleware.validateUpdateItem,CategoryController.updateItem])
 
-        this.app.delete('/category/:id',[trimRequest.all,CategoryMiddleware.validateDeleteItem,CategoryController.deleteItem])
-
-
+        this.app.delete('/category/:id',[jwtMiddleware.verifyAccessJwt,jwtMiddleware.validateRole(['admin']),trimRequest.all,CategoryMiddleware.validateDeleteItem,CategoryController.deleteItem])
 
 
-        //return this.app;
+
+
+        return this.app;
     }
     
 }

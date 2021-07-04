@@ -1,5 +1,6 @@
 import CommonMiddleWare from '../../common/common.middleware'
 import {validate} from '../../common/utils'
+import CategorySchema from './category.service'
 
 import {check} from 'express-validator'
 import express from 'express'
@@ -9,6 +10,7 @@ class CategoryMiddleware extends CommonMiddleWare{
     private static instance: CategoryMiddleware 
     constructor(){
         super()
+        this.model=CategorySchema.Category
     }
 
     static getInstance(){
@@ -30,7 +32,11 @@ class CategoryMiddleware extends CommonMiddleWare{
         .isAlpha('en-US',{ignore:' '})
         .withMessage('Mustbe alphabetic')
         .bail()
-        .trim(),
+        .custom(async(value,{req})=>{
+            return this.checkDuplicate({name:value})
+        })
+        .trim()
+        ,
         check('description')
         .exists()
         .withMessage("Not_existing")
@@ -44,6 +50,7 @@ class CategoryMiddleware extends CommonMiddleWare{
         .bail()
         .trim(),
         (req:express.Request, res:express.Response, next:express.NextFunction)=>{
+            
             validate(req,res,next)          
         }
     ]
@@ -92,6 +99,19 @@ class CategoryMiddleware extends CommonMiddleWare{
         .bail()
         .isAlpha('en-US',{ignore:' '})
         .withMessage('Mustbe alphabetic')
+        .bail()
+        .trim(),
+
+        check('description')
+        .exists()
+        .withMessage("Not_existing")
+        .bail()
+        .not()
+        .isEmpty()
+        .withMessage("Empty")
+        .bail()
+        .isLength({min:3})
+        .withMessage('Minlength')
         .bail()
         .trim(),
         (req: express.Request,res :express.Response,next: express.NextFunction)=>{

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const DB_URI='mongodb://127.0.0.1:27017/test'
+const DB_URI=process.env.DB_URL || " "
 
 class MongooseService{
     

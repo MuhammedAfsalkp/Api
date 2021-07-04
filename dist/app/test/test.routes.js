@@ -13,7 +13,7 @@ class TestRoutes extends common_routes_1.default {
         this.app.get('/test', (req, res) => {
             res.status(200).send("Updatingg");
         });
-        // return this.app;
+        return this.app;
     }
 }
 exports.default = TestRoutes;

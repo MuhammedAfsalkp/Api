@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.itemNotFound = exports.isEmpty = exports.isIdGood = exports.validate = exports.buildSuccessObject = exports.buildErrObj = exports.handleError = void 0;
+exports.getEnvValue = exports.itemNotFound = exports.isEmpty = exports.isIdGood = exports.validate = exports.buildSuccessObject = exports.buildErrObj = exports.handleError = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const express_validator_1 = require("express-validator");
 function handleError(res, message) {
@@ -60,7 +60,14 @@ function itemNotFound(err, item, reject, message) {
         reject(buildErrObj(400, err.message));
     }
     if (!item || item == null) {
-        reject(buildErrObj(400, 'NOT_FOUNd'));
+        reject(buildErrObj(400, 'NOT_FOUND'));
     }
 }
 exports.itemNotFound = itemNotFound;
+function getEnvValue(envName, def) {
+    if (envName in process.env) {
+        return process.env[envName];
+    }
+    return def;
+}
+exports.getEnvValue = getEnvValue;
