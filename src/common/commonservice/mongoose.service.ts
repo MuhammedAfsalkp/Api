@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const DB_URI=process.env.DB_URL || " "
+const DB_URI=process.env.DB_URL || "mongodb+srv://afsalkp:afsalkp@cluster0.cnmrqxd.mongodb.net/test"
 
 class MongooseService{
     

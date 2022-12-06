@@ -51,7 +51,7 @@ class CategoryService extends db{
                  console.log(res.locals.user.userId)
 
                 if(err||cat==null){
-                    reject(buildErrObj(400,'INVALID-REQUEST'))
+                    reject(buildErrObj(400,'INVALID_REQUEST'))
                 }
                 else if(cat.userId.toString()==res.locals.user.userId){
                     resolve(true)

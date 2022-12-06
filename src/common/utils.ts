@@ -28,7 +28,7 @@ export  function validate(req:express.Request,res:express.Response,next:express.
         validationResult(req).throw()
         console.log("Validation complete without any error")
         return next()
-    }catch(err){
+    }catch(err:any){
         const error=err.array()
         console.log(error)
         let e:any={}
